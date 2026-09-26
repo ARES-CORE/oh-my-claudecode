@@ -455,7 +455,7 @@ describe('auto-update reconciliation', () => {
     }));
 
     mockedExecSync.mockImplementation((command: string) => {
-      if (command === 'npm install -g oh-my-claude-sisyphus@latest') {
+      if (command === 'npm install -g github:ARES-CORE/oh-my-claudecode') {
         return '';
       }
       if (command === 'npm root -g') {
@@ -481,7 +481,7 @@ describe('auto-update reconciliation', () => {
     const result = await performUpdate({ verbose: false });
 
     expect(result.success).toBe(true);
-    expect(mockedExecSync).toHaveBeenCalledWith('npm install -g oh-my-claude-sisyphus@latest', expect.any(Object));
+    expect(mockedExecSync).toHaveBeenCalledWith('npm install -g github:ARES-CORE/oh-my-claudecode', expect.any(Object));
   });
 
   it('runs reconciliation as part of performUpdate without plugin hook reinjection', async () => {
@@ -515,7 +515,7 @@ describe('auto-update reconciliation', () => {
     const result = await performUpdate({ verbose: false });
 
     expect(result.success).toBe(true);
-    expect(mockedExecSync).toHaveBeenCalledWith('npm install -g oh-my-claude-sisyphus@latest', expect.any(Object));
+    expect(mockedExecSync).toHaveBeenCalledWith('npm install -g github:ARES-CORE/oh-my-claudecode', expect.any(Object));
     expect(mockedInstall).toHaveBeenCalledWith({
       force: true,
       verbose: false,
@@ -763,7 +763,7 @@ describe('auto-update reconciliation', () => {
     }));
 
     mockedExecSync.mockImplementation((command: string) => {
-      if (command === 'npm install -g oh-my-claude-sisyphus@latest') {
+      if (command === 'npm install -g github:ARES-CORE/oh-my-claudecode') {
         return '';
       }
       throw new Error(`Unexpected execSync command: ${command}`);
@@ -782,7 +782,7 @@ describe('auto-update reconciliation', () => {
     const result = await performUpdate({ verbose: false });
 
     expect(result.success).toBe(true);
-    expect(mockedExecSync).toHaveBeenCalledWith('npm install -g oh-my-claude-sisyphus@latest', expect.objectContaining({
+    expect(mockedExecSync).toHaveBeenCalledWith('npm install -g github:ARES-CORE/oh-my-claudecode', expect.objectContaining({
       windowsHide: true,
     }));
     expect(mockedExecFileSync).toHaveBeenNthCalledWith(1, 'where.exe', ['omc.cmd'], expect.objectContaining({
