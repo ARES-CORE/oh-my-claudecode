@@ -18,10 +18,12 @@ import { purgeStalePluginCacheVersions } from '../utils/paths.js';
 import { isAutoUpdateDisabled } from '../lib/security-config.js';
 import { OMC_CONFIG_FILE_REL } from '../lib/paths.js';
 /** GitHub repository information */
-export const REPO_OWNER = 'Yeachan-Heo';
+export const REPO_OWNER = 'ARES-CORE';
 export const REPO_NAME = 'oh-my-claudecode';
 export const GITHUB_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`;
 export const GITHUB_RAW_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}`;
+/** npm spec for updates: install from this fork's repository, never the upstream npm package. */
+export const UPDATE_INSTALL_SPEC = `github:${REPO_OWNER}/${REPO_NAME}`;
 /**
  * Best-effort sync of the Claude Code marketplace clone.
  * The marketplace clone at ~/.claude/plugins/marketplaces/omc/ is used by
@@ -508,7 +510,7 @@ export async function performUpdate(options) {
         const newVersion = release.tag_name.replace(/^v/, '');
         // Use npm for updates on all platforms (install.sh was removed)
         try {
-            execSync('npm install -g oh-my-claude-sisyphus@latest', {
+            execSync(`npm install -g ${UPDATE_INSTALL_SPEC}`, {
                 encoding: 'utf-8',
                 stdio: options?.verbose ? 'inherit' : 'pipe',
                 timeout: 120000, // 2 minute timeout for npm
@@ -583,7 +585,7 @@ export async function performUpdate(options) {
         }
         catch (npmError) {
             throw new Error('Auto-update via npm failed. Please run manually:\n' +
-                '  npm install -g oh-my-claude-sisyphus@latest\n' +
+                `  npm install -g ${UPDATE_INSTALL_SPEC}\n` +
                 'Or use: /plugin install oh-my-claudecode\n' +
                 `Error: ${npmError instanceof Error ? npmError.message : npmError}`);
         }

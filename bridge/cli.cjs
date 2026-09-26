@@ -10682,6 +10682,7 @@ __export(auto_update_exports, {
   GITHUB_RAW_URL: () => GITHUB_RAW_URL,
   REPO_NAME: () => REPO_NAME,
   REPO_OWNER: () => REPO_OWNER,
+  UPDATE_INSTALL_SPEC: () => UPDATE_INSTALL_SPEC,
   VERSION_FILE: () => VERSION_FILE2,
   backgroundUpdateCheck: () => backgroundUpdateCheck,
   checkForUpdates: () => checkForUpdates,
@@ -11100,7 +11101,7 @@ async function performUpdate(options) {
     const release = await fetchLatestRelease();
     const newVersion = release.tag_name.replace(/^v/, "");
     try {
-      (0, import_child_process14.execSync)("npm install -g oh-my-claude-sisyphus@latest", {
+      (0, import_child_process14.execSync)(`npm install -g ${UPDATE_INSTALL_SPEC}`, {
         encoding: "utf-8",
         stdio: options?.verbose ? "inherit" : "pipe",
         timeout: 12e4,
@@ -11165,7 +11166,7 @@ async function performUpdate(options) {
     } catch (npmError) {
       throw new Error(
         `Auto-update via npm failed. Please run manually:
-  npm install -g oh-my-claude-sisyphus@latest
+  npm install -g ${UPDATE_INSTALL_SPEC}
 Or use: /plugin install oh-my-claudecode
 Error: ${npmError instanceof Error ? npmError.message : npmError}`
       );
@@ -11383,7 +11384,7 @@ function initSilentAutoUpdate(config2 = {}) {
   silentAutoUpdate(config2).catch(() => {
   });
 }
-var import_fs38, import_path50, import_child_process14, REPO_OWNER, REPO_NAME, GITHUB_API_URL, GITHUB_RAW_URL, CLAUDE_CONFIG_DIR2, VERSION_FILE2, CONFIG_FILE, SILENT_UPDATE_STATE_FILE;
+var import_fs38, import_path50, import_child_process14, REPO_OWNER, REPO_NAME, GITHUB_API_URL, GITHUB_RAW_URL, UPDATE_INSTALL_SPEC, CLAUDE_CONFIG_DIR2, VERSION_FILE2, CONFIG_FILE, SILENT_UPDATE_STATE_FILE;
 var init_auto_update = __esm({
   "src/features/auto-update.ts"() {
     "use strict";
@@ -11395,10 +11396,11 @@ var init_auto_update = __esm({
     init_paths();
     init_security_config();
     init_paths3();
-    REPO_OWNER = "Yeachan-Heo";
+    REPO_OWNER = "ARES-CORE";
     REPO_NAME = "oh-my-claudecode";
     GITHUB_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}`;
     GITHUB_RAW_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}`;
+    UPDATE_INSTALL_SPEC = `github:${REPO_OWNER}/${REPO_NAME}`;
     CLAUDE_CONFIG_DIR2 = getClaudeConfigDir();
     VERSION_FILE2 = (0, import_path50.join)(CLAUDE_CONFIG_DIR2, ".omc-version.json");
     CONFIG_FILE = (0, import_path50.join)(CLAUDE_CONFIG_DIR2, OMC_CONFIG_FILE_REL);
