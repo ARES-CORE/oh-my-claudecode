@@ -13,6 +13,7 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
+import { isAutoUpdateDisabled } from '../lib/security-config.js';
 import { join } from 'path';
 import { writeFileSync, existsSync } from 'fs';
 import { getClaudeConfigDir } from '../utils/config-dir.js';
@@ -741,6 +742,16 @@ Examples:
   $ omc update --force           Force reinstall
   $ omc update --standalone      Force npm update in plugin context`)
   .action(async (options) => {
+    // security.disableAutoUpdate (or OMC_SECURITY=strict) means no network updates at all,
+    // manual ones included: offline installs update from a local bundle instead.
+    if (isAutoUpdateDisabled()) {
+      console.error(chalk.yellow(
+        'Updates are disabled by security policy (disableAutoUpdate). ' +
+        'No network request was made; update from an offline bundle instead.'
+      ));
+      process.exitCode = 1;
+      return;
+    }
     if (!options.quiet) {
       console.log(chalk.blue('Oh-My-ClaudeCode Update\n'));
     }
