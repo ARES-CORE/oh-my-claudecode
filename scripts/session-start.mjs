@@ -553,7 +553,19 @@ function shouldNotifyDrift(driftInfo) {
 }
 
 // Check npm registry for available update (with 24h cache)
+// security.disableAutoUpdate (or OMC_SECURITY=strict) forbids any update check over the
+// network, including this session-start one. Falls back to OMC_SECURITY if dist/ is missing.
+async function isUpdateCheckDisabled() {
+  try {
+    const mod = await import(pathToFileURL(join(__dirname, '..', 'dist', 'lib', 'security-config.js')).href);
+    return mod.isAutoUpdateDisabled();
+  } catch {
+    return process.env.OMC_SECURITY === 'strict';
+  }
+}
+
 async function checkNpmUpdate(currentVersion) {
+  if (await isUpdateCheckDisabled()) return null;
   const cacheFile = join(configDir, '.omc', 'update-check.json');
   const CACHE_DURATION = 24 * 60 * 60 * 1000;
   const now = Date.now();

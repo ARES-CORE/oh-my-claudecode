@@ -27,6 +27,10 @@ case "${1:-}" in
     grep -q "blocked by security policy" <<<"$out" && echo "ok   ask codex bloqueado (disableExternalLLM)" || { echo "FAIL ask codex no bloqueado"; fail=1; }
     out=$(OMC_SECURITY=strict "${CLI[@]}" update --check 2>&1 || true)
     grep -q "No network request was made" <<<"$out" && echo "ok   update bloqueado sin red (disableAutoUpdate)" || { echo "FAIL update salió a la red: $out"; fail=1; }
+    out=$(echo '{"session_id":"drv","cwd":"'"$RUN/proj"'","hook_event_name":"SessionStart"}' | \
+      OMC_SECURITY=strict CLAUDE_CONFIG_DIR="$HOME/.claude" CLAUDE_PLUGIN_ROOT="$ROOT" \
+      node --import "$HERE/fetchlog.mjs" "$ROOT/scripts/session-start.mjs" 2>&1 >/dev/null | grep FETCH || true)
+    [ -z "$out" ] && echo "ok   session-start sin red (disableAutoUpdate)" || { echo "FAIL session-start salió a la red: $out"; fail=1; }
     exit $fail ;;
   mcp)
     shift

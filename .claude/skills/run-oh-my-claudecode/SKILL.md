@@ -28,7 +28,7 @@ Only needed after editing `src/`; commit the regenerated `dist/` and `bridge/`.
 
 ```bash
 D=.claude/skills/run-oh-my-claudecode/driver.sh
-$D cli                                              # version, config, strict-mode blocks
+$D cli                                              # version, config, strict-mode blocks (ask, update, session-start)
 $D mcp list                                         # 49 local tools
 $D mcp call notepad_write_working '{"content":"x"}' # real tool call in .omc-run/proj
 $D mcp call notepad_read
@@ -63,8 +63,9 @@ Set in `~/.config/claude-omc/config.jsonc` (or `OMC_SECURITY=strict` for everyth
 ```
 
 - `disableExternalLLM`: `omc ask codex|gemini` is refused and only `claude` is allowed.
-- `disableAutoUpdate`: blocks the silent auto-update **and** `omc update`, which
-  exits 1 without making any network request.
+- `disableAutoUpdate`: blocks the silent auto-update, `omc update` (exit 1, no network)
+  **and** the npm registry check in `scripts/session-start.mjs` (it used to query
+  `registry.npmjs.org` on every session start and announce upstream versions).
 - Updates come from `github:ARES-CORE/oh-my-claudecode` (the fork) when allowed,
   never from the upstream npm package.
 
@@ -77,6 +78,8 @@ Set in `~/.config/claude-omc/config.jsonc` (or `OMC_SECURITY=strict` for everyth
 - Before this change `omc update --check` still called GitHub under strict mode
   (`403 Forbidden` behind the sandbox proxy); now it is refused locally.
 - `omc config` does not print the `security` section; use `driver.sh security`.
+- To detect network calls from any script: `node --import ./.claude/skills/run-oh-my-claudecode/fetchlog.mjs <script>`,
+  which prints `FETCH <url>` to stderr for every `fetch()`.
 - `.gitignore` ignores `.claude/*` except `.claude/skills/`.
 
 ## Troubleshooting
