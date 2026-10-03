@@ -25,6 +25,8 @@ const DEFAULTS = {
     hardMaxIterations: 500,
     disableRemoteMcp: false,
     disableExternalLLM: false,
+    disableKeywordTriggers: false,
+    disableStopEnforcement: false,
 };
 const STRICT_OVERRIDES = {
     restrictToolPaths: true,
@@ -34,6 +36,8 @@ const STRICT_OVERRIDES = {
     hardMaxIterations: 200,
     disableRemoteMcp: true,
     disableExternalLLM: true,
+    disableKeywordTriggers: true,
+    disableStopEnforcement: true,
 };
 /** Cached config to avoid re-reading files on every call */
 let cachedConfig = null;
@@ -81,6 +85,8 @@ export function getSecurityConfig() {
             disableAutoUpdate: base.disableAutoUpdate || (fileOverrides.disableAutoUpdate ?? false),
             disableRemoteMcp: base.disableRemoteMcp || (fileOverrides.disableRemoteMcp ?? false),
             disableExternalLLM: base.disableExternalLLM || (fileOverrides.disableExternalLLM ?? false),
+            disableKeywordTriggers: base.disableKeywordTriggers || (fileOverrides.disableKeywordTriggers ?? false),
+            disableStopEnforcement: base.disableStopEnforcement || (fileOverrides.disableStopEnforcement ?? false),
             hardMaxIterations: Math.min(base.hardMaxIterations, (typeof fileOverrides.hardMaxIterations === "number" && fileOverrides.hardMaxIterations > 0) ? fileOverrides.hardMaxIterations : base.hardMaxIterations),
         };
     }
@@ -92,6 +98,8 @@ export function getSecurityConfig() {
             disableAutoUpdate: fileOverrides.disableAutoUpdate ?? base.disableAutoUpdate,
             disableRemoteMcp: fileOverrides.disableRemoteMcp ?? base.disableRemoteMcp,
             disableExternalLLM: fileOverrides.disableExternalLLM ?? base.disableExternalLLM,
+            disableKeywordTriggers: fileOverrides.disableKeywordTriggers ?? base.disableKeywordTriggers,
+            disableStopEnforcement: fileOverrides.disableStopEnforcement ?? base.disableStopEnforcement,
             hardMaxIterations: fileOverrides.hardMaxIterations ?? base.hardMaxIterations,
         };
     }
@@ -128,5 +136,13 @@ export function isRemoteMcpDisabled() {
 /** Convenience: are external LLM providers disabled? */
 export function isExternalLLMDisabled() {
     return getSecurityConfig().disableExternalLLM;
+}
+/** Convenience: are prompt keyword triggers (magic keywords) disabled? */
+export function isKeywordTriggersDisabled() {
+    return getSecurityConfig().disableKeywordTriggers;
+}
+/** Convenience: may Stop hooks never block Claude from finishing? */
+export function isStopEnforcementDisabled() {
+    return getSecurityConfig().disableStopEnforcement;
 }
 //# sourceMappingURL=security-config.js.map

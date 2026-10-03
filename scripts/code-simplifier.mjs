@@ -22,6 +22,7 @@ import { homedir } from 'os';
 import { execSync } from 'child_process';
 import { readStdin } from './lib/stdin.mjs';
 
+import { isPolicyEnabled } from './lib/security-policy.mjs';
 const DEFAULT_EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx', '.py', '.go', '.rs'];
 const DEFAULT_MAX_FILES = 10;
 const MARKER_FILENAME = 'code-simplifier-triggered.marker';
@@ -77,6 +78,12 @@ function buildMessage(files) {
 }
 
 async function main() {
+  // Política del operador: disableStopEnforcement. El mensaje del usuario y la respuesta de Claude no se interceptan.
+  if (await isPolicyEnabled('disableStopEnforcement')) {
+    process.stdout.write(JSON.stringify({ continue: true }) + '\n');
+    return;
+  }
+
   try {
     const input = await readStdin();
     let data = {};

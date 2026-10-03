@@ -20,6 +20,8 @@ import {
   getHardMaxIterations,
   isRemoteMcpDisabled,
   isExternalLLMDisabled,
+  isKeywordTriggersDisabled,
+  isStopEnforcementDisabled,
 } from '../lib/security-config.js';
 
 const mockedExistsSync = vi.mocked(existsSync);
@@ -54,6 +56,8 @@ describe('security-config', () => {
       // New fields default to false
       expect(config.disableRemoteMcp).toBe(false);
       expect(config.disableExternalLLM).toBe(false);
+      expect(config.disableKeywordTriggers).toBe(false);
+      expect(config.disableStopEnforcement).toBe(false);
     });
 
     it('convenience functions reflect defaults', () => {
@@ -64,6 +68,8 @@ describe('security-config', () => {
       expect(getHardMaxIterations()).toBe(500);
       expect(isRemoteMcpDisabled()).toBe(false);
       expect(isExternalLLMDisabled()).toBe(false);
+      expect(isKeywordTriggersDisabled()).toBe(false);
+      expect(isStopEnforcementDisabled()).toBe(false);
     });
   });
 
@@ -83,6 +89,8 @@ describe('security-config', () => {
       // New fields are true in strict mode
       expect(config.disableRemoteMcp).toBe(true);
       expect(config.disableExternalLLM).toBe(true);
+      expect(config.disableKeywordTriggers).toBe(true);
+      expect(config.disableStopEnforcement).toBe(true);
     });
 
     it('convenience functions return true/200', () => {
@@ -93,6 +101,8 @@ describe('security-config', () => {
       expect(getHardMaxIterations()).toBe(200);
       expect(isRemoteMcpDisabled()).toBe(true);
       expect(isExternalLLMDisabled()).toBe(true);
+      expect(isKeywordTriggersDisabled()).toBe(true);
+      expect(isStopEnforcementDisabled()).toBe(true);
     });
   });
 
@@ -147,6 +157,8 @@ describe('security-config', () => {
           disableAutoUpdate: false,
           disableRemoteMcp: false,
           disableExternalLLM: false,
+          disableKeywordTriggers: false,
+          disableStopEnforcement: false,
           hardMaxIterations: 9999,
         },
       }));
@@ -160,6 +172,8 @@ describe('security-config', () => {
       expect(config.disableAutoUpdate).toBe(true);
       expect(config.disableRemoteMcp).toBe(true);
       expect(config.disableExternalLLM).toBe(true);
+      expect(config.disableKeywordTriggers).toBe(true);
+      expect(config.disableStopEnforcement).toBe(true);
       // hardMaxIterations: Math.min(200, 9999) = 200
       expect(config.hardMaxIterations).toBe(200);
     });
@@ -184,6 +198,7 @@ describe('security-config', () => {
         security: {
           restrictToolPaths: true,
           disableRemoteMcp: true,
+          disableKeywordTriggers: true,
           hardMaxIterations: 100,
         },
       }));
@@ -194,9 +209,11 @@ describe('security-config', () => {
       expect(config.restrictToolPaths).toBe(true);
       expect(config.disableRemoteMcp).toBe(true);
       expect(config.hardMaxIterations).toBe(100);
+      expect(config.disableKeywordTriggers).toBe(true);
       // Unset fields keep defaults
       expect(config.pythonSandbox).toBe(false);
       expect(config.disableExternalLLM).toBe(false);
+      expect(config.disableStopEnforcement).toBe(false);
     });
   });
 });

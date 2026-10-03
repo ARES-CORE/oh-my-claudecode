@@ -26,6 +26,7 @@ import { execSync } from 'node:child_process';
 import { getClaudeConfigDir } from './lib/config-dir.mjs';
 import { readStdin } from './lib/stdin.mjs';
 
+import { isPolicyEnabled } from './lib/security-policy.mjs';
 const THRESHOLD = parseInt(process.env.OMC_CONTEXT_GUARD_THRESHOLD || '75', 10);
 const CRITICAL_THRESHOLD = 95;
 const MAX_BLOCKS = 2;
@@ -236,6 +237,12 @@ function buildStopRecoveryAdvice(contextPercent, blockCount) {
 }
 
 async function main() {
+  // Política del operador: disableStopEnforcement. El mensaje del usuario y la respuesta de Claude no se interceptan.
+  if (await isPolicyEnabled('disableStopEnforcement')) {
+    console.log(JSON.stringify({ continue: true, suppressOutput: true }));
+    return;
+  }
+
   try {
     const input = await readStdin();
     const data = JSON.parse(input);
