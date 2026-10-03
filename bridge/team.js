@@ -4215,6 +4215,8 @@ function getSecurityConfig() {
       disableAutoUpdate: base.disableAutoUpdate || (fileOverrides.disableAutoUpdate ?? false),
       disableRemoteMcp: base.disableRemoteMcp || (fileOverrides.disableRemoteMcp ?? false),
       disableExternalLLM: base.disableExternalLLM || (fileOverrides.disableExternalLLM ?? false),
+      disableKeywordTriggers: base.disableKeywordTriggers || (fileOverrides.disableKeywordTriggers ?? false),
+      disableStopEnforcement: base.disableStopEnforcement || (fileOverrides.disableStopEnforcement ?? false),
       hardMaxIterations: Math.min(base.hardMaxIterations, typeof fileOverrides.hardMaxIterations === "number" && fileOverrides.hardMaxIterations > 0 ? fileOverrides.hardMaxIterations : base.hardMaxIterations)
     };
   } else {
@@ -4225,6 +4227,8 @@ function getSecurityConfig() {
       disableAutoUpdate: fileOverrides.disableAutoUpdate ?? base.disableAutoUpdate,
       disableRemoteMcp: fileOverrides.disableRemoteMcp ?? base.disableRemoteMcp,
       disableExternalLLM: fileOverrides.disableExternalLLM ?? base.disableExternalLLM,
+      disableKeywordTriggers: fileOverrides.disableKeywordTriggers ?? base.disableKeywordTriggers,
+      disableStopEnforcement: fileOverrides.disableStopEnforcement ?? base.disableStopEnforcement,
       hardMaxIterations: fileOverrides.hardMaxIterations ?? base.hardMaxIterations
     };
   }
@@ -4246,7 +4250,9 @@ var init_security_config = __esm({
       disableAutoUpdate: false,
       hardMaxIterations: 500,
       disableRemoteMcp: false,
-      disableExternalLLM: false
+      disableExternalLLM: false,
+      disableKeywordTriggers: false,
+      disableStopEnforcement: false
     };
     STRICT_OVERRIDES = {
       restrictToolPaths: true,
@@ -4255,7 +4261,9 @@ var init_security_config = __esm({
       disableAutoUpdate: true,
       hardMaxIterations: 200,
       disableRemoteMcp: true,
-      disableExternalLLM: true
+      disableExternalLLM: true,
+      disableKeywordTriggers: true,
+      disableStopEnforcement: true
     };
     cachedConfig = null;
   }

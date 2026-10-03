@@ -59,13 +59,22 @@ npx vitest run                                                        # full: 89
 Set in `~/.config/claude-omc/config.jsonc` (or `OMC_SECURITY=strict` for everything):
 
 ```jsonc
-{ "security": { "disableAutoUpdate": true, "disableRemoteMcp": true, "disableExternalLLM": true } }
+{ "security": { "disableAutoUpdate": true, "disableRemoteMcp": true, "disableExternalLLM": true,
+                "disableKeywordTriggers": true, "disableStopEnforcement": true } }
 ```
 
 - `disableExternalLLM`: `omc ask codex|gemini` is refused and only `claude` is allowed.
 - `disableAutoUpdate`: blocks the silent auto-update, `omc update` (exit 1, no network)
   **and** the npm registry check in `scripts/session-start.mjs` (it used to query
   `registry.npmjs.org` on every session start and announce upstream versions).
+- `disableKeywordTriggers`: `scripts/keyword-detector.mjs` stops turning prompt words
+  ("wiki", "end to end", "uw", "must complete", ...) into injected mode orders and
+  writes no `.omc/state/sessions/*/{ralph,ultrawork,autopilot}-state.json`.
+- `disableStopEnforcement`: the Stop hooks (`persistent-mode`, `context-guard-stop`,
+  `code-simplifier`) never return `decision: "block"`, so a leftover mode state can no
+  longer keep Claude looping (`[ULTRAWORK #1/50] ...`) instead of answering.
+- Hook scripts read the policy through `scripts/lib/security-policy.mjs` (falls back to
+  `OMC_SECURITY=strict` if `dist/` is missing).
 - Updates come from `github:ARES-CORE/oh-my-claudecode` (the fork) when allowed,
   never from the upstream npm package.
 

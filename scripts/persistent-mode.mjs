@@ -27,6 +27,7 @@ import { fileURLToPath, pathToFileURL } from "url";
 import { getClaudeConfigDir } from "./lib/config-dir.mjs";
 import { resolveOmcStateRoot } from "./lib/state-root.mjs";
 
+import { isPolicyEnabled } from './lib/security-policy.mjs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -675,6 +676,12 @@ function isScheduledWakeupStop(data) {
 }
 
 async function main() {
+  // Política del operador: disableStopEnforcement. El mensaje del usuario y la respuesta de Claude no se interceptan.
+  if (await isPolicyEnabled('disableStopEnforcement')) {
+    console.log(JSON.stringify({ continue: true, suppressOutput: true }));
+    return;
+  }
+
   try {
     const input = await readStdin();
     let data = {};

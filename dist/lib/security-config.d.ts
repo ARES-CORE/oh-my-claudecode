@@ -28,6 +28,10 @@ export interface SecurityConfig {
     disableRemoteMcp: boolean;
     /** Disable external LLM providers (Codex, Gemini) in team mode */
     disableExternalLLM: boolean;
+    /** Never turn words in the user's prompt into injected mode/skill orders (magic keywords) */
+    disableKeywordTriggers: boolean;
+    /** Never let a Stop hook block Claude from finishing its reply (persistent modes, guards) */
+    disableStopEnforcement: boolean;
 }
 /**
  * Resolve the full security configuration.
@@ -50,4 +54,8 @@ export declare function getHardMaxIterations(): number;
 export declare function isRemoteMcpDisabled(): boolean;
 /** Convenience: are external LLM providers disabled? */
 export declare function isExternalLLMDisabled(): boolean;
+/** Convenience: are prompt keyword triggers (magic keywords) disabled? */
+export declare function isKeywordTriggersDisabled(): boolean;
+/** Convenience: may Stop hooks never block Claude from finishing? */
+export declare function isStopEnforcementDisabled(): boolean;
 //# sourceMappingURL=security-config.d.ts.map

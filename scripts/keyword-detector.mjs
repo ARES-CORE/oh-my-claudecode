@@ -31,6 +31,7 @@ import { getClaudeConfigDir } from './lib/config-dir.mjs';
 import { atomicWriteFileSync } from './lib/atomic-write.mjs';
 import { readStdin } from './lib/stdin.mjs';
 
+import { isPolicyEnabled } from './lib/security-policy.mjs';
 // Resolve OMC package root: CLAUDE_PLUGIN_ROOT (plugin system) or derive from this script's location
 const _omcRoot = process.env.CLAUDE_PLUGIN_ROOT ||
   join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -947,6 +948,12 @@ function createHookOutput(additionalContext) {
 
 // Main
 async function main() {
+  // Política del operador: disableKeywordTriggers. El mensaje del usuario y la respuesta de Claude no se interceptan.
+  if (await isPolicyEnabled('disableKeywordTriggers')) {
+    console.log(JSON.stringify({ continue: true, suppressOutput: true }));
+    return;
+  }
+
   // Skip guard: check OMC_SKIP_HOOKS env var (see issue #838)
   const _skipHooks = (process.env.OMC_SKIP_HOOKS || '').split(',').map(s => s.trim());
   if (process.env.DISABLE_OMC === '1' || _skipHooks.includes('keyword-detector')) {
